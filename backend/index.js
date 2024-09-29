@@ -4,29 +4,37 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./utils/db.js";
 import userRoute from "./routes/user.route.js";
+import companyRoute from "./routes/company.route.js";
+
+// Initialize express app
 const app = express();
-dotenv.config(); // Added missing parentheses
 
+// Load environment variables
+dotenv.config();
 
-// middleware
+// Middleware
 app.use(express.json());
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-const corsOptions = {
-    origin:'http://localhost:5173',
-    credentials:true
-}
 
+// CORS options for allowing frontend access and credentials (cookies)
+const corsOptions = {
+    origin: 'http://localhost:5173',
+    credentials: true // Allow cookies and credentials
+};
 app.use(cors(corsOptions));
 
-app.use('/api/v1/user',userRoute);
+// Routes
+app.use('/api/v1/user', userRoute);
+app.use('/api/v1/company', companyRoute);
 
+// Server port
 const PORT = process.env.PORT || 3000;
 
-
-app.listen(PORT,()=>{
- connectDB();
-  console.log(`Server running at port ${PORT}`);
-})
-
-
+// Start server and connect to the database
+app.listen(PORT, async () => {
+    await connectDB(); 
+    
+    // Ensure DB connection before listening
+    console.log(`Server running at port ${PORT}`);
+});

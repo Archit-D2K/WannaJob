@@ -1,108 +1,108 @@
-
-import {User} from "../models/user.model.js";
+import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs";
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
 export const register = async (req, res) => {
-    try{
+    try {
+        const { fullname, email, phoneNumber, password, role } = req.body;
+         
+        if (!fullname || !email || !phoneNumber || !password || !role) {
+            return res.status(400).json({
+                message: "Something is missing",
+                success: false
+            });
+        };
 
-  
-    const { fullname, email, password, role, phoneNumber } = req.body;
-    if (!fullname || !email || !password || !role || !phoneNumber) {
-        return res.status(400).json({ message: "All fields are required" });
+        const user = await User.findOne({ email });
+        if (user) {
+            return res.status(400).json({
+                message: 'User already exist with this email.',
+                success: false,
+            })
+        }
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        await User.create({
+            fullname,
+            email,
+            phoneNumber,
+            password: hashedPassword,
+            role,
+        });
+
+        return res.status(201).json({
+            message: "Account created successfully.",
+            success: true
+        });
+    } catch (error) {
+        console.log(error);
     }
-    const user = await User.findOne({ email });
-    if (user) {
-        return res.status(400).json({ message: "User already exists" });
-    }
-    const hashedPassword = await bcrypt.hash(password, 10);
-    await User.create({
-        fullname,
-        email,
-        password: hashedPassword,
-        role,
-        phoneNumber,
-      
-    });
-    res.status(201).json({ message: "User created successfully" });
-} catch (error) {
-    
-    res.status(500).json({ message: "Internal server error" });
 }
-}
-
-
 export const login = async (req, res) => {
     try {
         const { email, password, role } = req.body;
-
-        // Check if all fields are present
+        
         if (!email || !password || !role) {
-            return res.status(400).json({ message: "All fields are required" });
-        }
-
-        // Find the user by email
-        const user = await User.findOne({ email });
+            return res.status(400).json({
+                message: "Something is missing",
+                success: false
+            });
+        };
+        let user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ message: "User does not exist" });
+            return res.status(400).json({
+                message: "Incorrect email or password.",
+                success: false,
+            })
         }
-
-        // Compare password
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(400).json({ message: "Invalid credentials" });
-        }
-
-        // Check if the role matches
+        const isPasswordMatch = await bcrypt.compare(password, user.password);
+        if (!isPasswordMatch) {
+            return res.status(400).json({
+                message: "Incorrect email or password.",
+                success: false,
+            })
+        };
+        // check role is correct or not
         if (role !== user.role) {
-            return res.status(400).json({ message: "Invalid role credentials" });
+            return res.status(400).json({
+                message: "Account doesn't exist with current role.",
+                success: false
+            })
+        };
+
+        const tokenData = {
+            userId: user._id
         }
+        const token = await jwt.sign(tokenData, process.env.SECRET_KEY, { expiresIn: '1d' });
 
-        // Generate token
-        const tokenData = { userId: user._id };
-        const token = jwt.sign(tokenData, process.env.SECRET_KEY, {
-            expiresIn: "1d",
-        });
-
-        // Prepare user data without overwriting `user` variable
-        const userData = {
+        user = {
             _id: user._id,
             fullname: user.fullname,
             email: user.email,
-            role: user.role,
             phoneNumber: user.phoneNumber,
-            profile: user.profile,
-        };
+            role: user.role,
+           
+        }
 
-        // Send response with token and user data
-        return res
-            .status(200)
-            .cookie("token", token, { 
-                maxAge: 1 * 24 * 60 * 60 * 1000, 
-                httpOnly: true, // Correct option
-                sameSite: 'strict' 
-            })
-            .json({
-                message: `Welcome back ${userData.fullname}`,
-                user: userData,
-                success: true
-            });
-
+        return res.status(200).cookie("token", token, { maxAge: 1 * 24 * 60 * 60 * 1000, httpsOnly: true, sameSite: 'strict' }).json({
+            message: `Welcome back ${user.fullname}`,
+            user,
+            success: true
+        })
     } catch (error) {
-        console.error(error);  // Log error for debugging
-        return res.status(500).json({ message: "Internal server error" });
-    }
-};
-export const logout = async (req, res) => {
-    try{
-        res.clearCookie("token");
-        res.status(200).json({ message: "Logout successful" });
-    }
-    catch (error) {
-        res.status(500).json({ message: "Internal server error" });
+        console.log(error);
     }
 }
-
+export const logout = async (req, res) => {
+    try {
+        return res.status(200).cookie("token", "", { maxAge: 0 }).json({
+            message: "Logged out successfully.",
+            success: true
+        })
+    } catch (error) {
+        console.log(error);
+    }
+}
 export const updateUser = async (req, res) => {
     try {
         const { fullname, email, phoneNumber, bio, skills } = req.body;
@@ -129,7 +129,7 @@ export const updateUser = async (req, res) => {
         if(phoneNumber)  user.phoneNumber = phoneNumber
         if(bio) user.profile.bio = bio
         if(skills) user.profile.skills = skillsArray
-        
+      
 
 
         await user.save();
@@ -140,7 +140,6 @@ export const updateUser = async (req, res) => {
             email: user.email,
             phoneNumber: user.phoneNumber,
             role: user.role,
-            profile: user.profile
         }
 
         return res.status(200).json({
