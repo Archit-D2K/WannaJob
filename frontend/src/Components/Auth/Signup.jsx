@@ -43,6 +43,7 @@ const Signup = () => {
         if (input.file) {
             formData.append("file", input.file);
         }
+        console.log(formData);
 
         try {
             dispatch(setLoading(true));
