@@ -13,62 +13,60 @@ import { setLoading } from '@/redux/authSlice'
 import { Loader2 } from 'lucide-react'
 
 const Signup = () => {
+
     const [input, setInput] = useState({
-        fullname: "",  // Ensure consistent field naming with backend
+        fullname: "",
         email: "",
         phoneNumber: "",
         password: "",
         role: "",
         file: ""
     });
-    const { loading, user } = useSelector(store => store.auth);
+    const {loading,user} = useSelector(store=>store.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const changeEventHandler = (e) => {
         setInput({ ...input, [e.target.name]: e.target.value });
     }
-
     const changeFileHandler = (e) => {
         setInput({ ...input, file: e.target.files?.[0] });
     }
-
     const submitHandler = async (e) => {
         e.preventDefault();
-        const formData = new FormData();
-        formData.append("fullname", input.fullname);  // Match backend expected "fullname"
-        formData.append("email", input.email);
-        formData.append("phoneNumber", input.phoneNumber);
-        formData.append("password", input.password);
-        formData.append("role", input.role);
-        if (input.file) {
-            formData.append("file", input.file);  // If file is selected
-        }
+        const userData = {
+            fullname: input.fullname,
+            email: input.email,
+            phoneNumber: input.phoneNumber,
+            password: input.password,
+            role: input.role
+        };
+
+        console.log("User data being sent:", userData);
 
         try {
             dispatch(setLoading(true));
-            const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
-                headers: { 'Content-Type': "multipart/form-data" },
+            const res = await axios.post(`${USER_API_END_POINT}/register`, userData, {
+                headers: { 'Content-Type': "application/json" },
                 withCredentials: true,
             });
+            console.log("Response from server:", res.data);
             if (res.data.success) {
                 navigate("/login");
                 toast.success(res.data.message);
             }
         } catch (error) {
-            console.log(error);
-            toast.error(error.response?.data?.message);
+            console.error("Error details:", error.response?.data);
+            toast.error(error.response?.data?.message || "An error occurred during signup");
         } finally {
             dispatch(setLoading(false));
         }
     }
-
-    useEffect(() => {
-        if (user) {
+    useEffect(()=>{
+        if(user){
             navigate("/");
         }
-    }, [user, navigate]);
-
+    },[])
     return (
         <div>
             <Navbar />
@@ -79,10 +77,10 @@ const Signup = () => {
                         <Label>Full Name</Label>
                         <Input
                             type="text"
-                            value={input.fullname}  // Match backend expected "fullname"
+                            value={input.fullname}
                             name="fullname"
                             onChange={changeEventHandler}
-                            placeholder="Henry"
+                            placeholder="patel"
                         />
                     </div>
                     <div className='my-2'>
@@ -92,7 +90,7 @@ const Signup = () => {
                             value={input.email}
                             name="email"
                             onChange={changeEventHandler}
-                            placeholder="henry@gmail.com"
+                            placeholder="patel@gmail.com"
                         />
                     </div>
                     <div className='my-2'>
@@ -102,7 +100,7 @@ const Signup = () => {
                             value={input.phoneNumber}
                             name="phoneNumber"
                             onChange={changeEventHandler}
-                            placeholder="9937848931"
+                            placeholder="8080808080"
                         />
                     </div>
                     <div className='my-2'>
@@ -112,7 +110,7 @@ const Signup = () => {
                             value={input.password}
                             name="password"
                             onChange={changeEventHandler}
-                            placeholder="abc@gmail.com"
+                            placeholder="patel@gmail.com"
                         />
                     </div>
                     <div className='flex items-center justify-between'>
@@ -151,13 +149,7 @@ const Signup = () => {
                         </div>
                     </div>
                     {
-                        loading ? (
-                            <Button className="w-full my-4">
-                                <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait
-                            </Button>
-                        ) : (
-                            <Button type="submit" className="w-full my-4">Signup</Button>
-                        )
+                        loading ? <Button className="w-full my-4"> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait </Button> : <Button type="submit" className="w-full my-4">Signup</Button>
                     }
                     <span className='text-sm'>Already have an account? <Link to="/login" className='text-blue-600'>Login</Link></span>
                 </form>
@@ -166,4 +158,4 @@ const Signup = () => {
     )
 }
 
-export default Signup;
+export default Signup
