@@ -13,35 +13,36 @@ import { setLoading } from '@/redux/authSlice'
 import { Loader2 } from 'lucide-react'
 
 const Signup = () => {
-
     const [input, setInput] = useState({
-        fullName: "",
+        fullname: "",  // Ensure consistent field naming with backend
         email: "",
         phoneNumber: "",
         password: "",
         role: "",
         file: ""
     });
-    const {loading,user} = useSelector(store=>store.auth);
+    const { loading, user } = useSelector(store => store.auth);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const changeEventHandler = (e) => {
         setInput({ ...input, [e.target.name]: e.target.value });
     }
+
     const changeFileHandler = (e) => {
         setInput({ ...input, file: e.target.files?.[0] });
     }
+
     const submitHandler = async (e) => {
         e.preventDefault();
-        const formData = new FormData();  
-        formData.append("fullName", input.fullName);
+        const formData = new FormData();
+        formData.append("fullname", input.fullname);  // Match backend expected "fullname"
         formData.append("email", input.email);
         formData.append("phoneNumber", input.phoneNumber);
         formData.append("password", input.password);
         formData.append("role", input.role);
         if (input.file) {
-            formData.append("file", input.file);
+            formData.append("file", input.file);  // If file is selected
         }
 
         try {
@@ -56,17 +57,18 @@ const Signup = () => {
             }
         } catch (error) {
             console.log(error);
-            toast.error(error.response.data.message);
-        } finally{
+            toast.error(error.response?.data?.message);
+        } finally {
             dispatch(setLoading(false));
         }
     }
 
-    useEffect(()=>{
-        if(user){
+    useEffect(() => {
+        if (user) {
             navigate("/");
         }
-    },[])
+    }, [user, navigate]);
+
     return (
         <div>
             <Navbar />
@@ -77,7 +79,7 @@ const Signup = () => {
                         <Label>Full Name</Label>
                         <Input
                             type="text"
-                            value={input.fullname}
+                            value={input.fullname}  // Match backend expected "fullname"
                             name="fullname"
                             onChange={changeEventHandler}
                             placeholder="Henry"
@@ -149,7 +151,13 @@ const Signup = () => {
                         </div>
                     </div>
                     {
-                        loading ? <Button className="w-full my-4"> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait </Button> : <Button type="submit" className="w-full my-4">Signup</Button>
+                        loading ? (
+                            <Button className="w-full my-4">
+                                <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait
+                            </Button>
+                        ) : (
+                            <Button type="submit" className="w-full my-4">Signup</Button>
+                        )
                     }
                     <span className='text-sm'>Already have an account? <Link to="/login" className='text-blue-600'>Login</Link></span>
                 </form>
@@ -158,4 +166,4 @@ const Signup = () => {
     )
 }
 
-export default Signup
+export default Signup;
