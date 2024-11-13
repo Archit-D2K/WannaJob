@@ -15,7 +15,7 @@ import { Loader2 } from 'lucide-react'
 const Signup = () => {
 
     const [input, setInput] = useState({
-        fullName: "",
+        fullname: "",
         email: "",
         phoneNumber: "",
         password: "",
@@ -47,22 +47,22 @@ const Signup = () => {
 
         try {
             dispatch(setLoading(true));
-            const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
-                headers: { 'Content-Type': "multipart/form-data" },
+            const res = await axios.post(`${USER_API_END_POINT}/register`, userData, {
+                headers: { 'Content-Type': "application/json" },
                 withCredentials: true,
             });
+            console.log("Response from server:", res.data);
             if (res.data.success) {
                 navigate("/login");
                 toast.success(res.data.message);
             }
         } catch (error) {
-            console.log(error);
-            toast.error(error.response.data.message);
-        } finally{
+            console.error("Error details:", error.response?.data);
+            toast.error(error.response?.data?.message || "An error occurred during signup");
+        } finally {
             dispatch(setLoading(false));
         }
     }
-
     useEffect(()=>{
         if(user){
             navigate("/");
@@ -81,7 +81,7 @@ const Signup = () => {
                             value={input.fullname}
                             name="fullname"
                             onChange={changeEventHandler}
-                            placeholder="Henry"
+                            placeholder="patel"
                         />
                     </div>
                     <div className='my-2'>
@@ -91,7 +91,7 @@ const Signup = () => {
                             value={input.email}
                             name="email"
                             onChange={changeEventHandler}
-                            placeholder="henry@gmail.com"
+                            placeholder="patel@gmail.com"
                         />
                     </div>
                     <div className='my-2'>
@@ -101,7 +101,7 @@ const Signup = () => {
                             value={input.phoneNumber}
                             name="phoneNumber"
                             onChange={changeEventHandler}
-                            placeholder="9937848931"
+                            placeholder="8080808080"
                         />
                     </div>
                     <div className='my-2'>
@@ -111,7 +111,7 @@ const Signup = () => {
                             value={input.password}
                             name="password"
                             onChange={changeEventHandler}
-                            placeholder="abc@gmail.com"
+                            placeholder="patel@gmail.com"
                         />
                     </div>
                     <div className='flex items-center justify-between'>

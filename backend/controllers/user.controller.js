@@ -3,9 +3,12 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 export const register = async (req, res) => {
+    console.log("Received request body:", req.body);
     try {
         const { fullname, email, phoneNumber, password, role } = req.body;
          
+        console.log("Parsed data:", { fullname, email, phoneNumber, password, role });
+
         if (!fullname || !email || !phoneNumber || !password || !role) {
             return res.status(400).json({
                 message: "Something is missing",
@@ -35,7 +38,11 @@ export const register = async (req, res) => {
             success: true
         });
     } catch (error) {
-        console.log(error);
+        console.error("Registration error:", error);
+        res.status(500).json({
+            message: "An error occurred during registration",
+            success: false
+        });
     }
 }
 export const login = async (req, res) => {
