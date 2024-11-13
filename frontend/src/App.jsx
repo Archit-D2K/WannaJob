@@ -1,22 +1,21 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import Navbar from './components/shared/Navbar'
-import Login from './components/auth/Login'
-import Signup from './components/auth/Signup'
-import Home from './components/Home'
-import Jobs from './components/Jobs'
-import Browse from './components/Browse'
-import Profile from './components/Profile'
-import JobDescription from './components/JobDescription'
-import Companies from './components/admin/Companies'
-import CompanyCreate from './components/admin/CompanyCreate'
-import CompanySetup from './components/admin/CompanySetup'
-import AdminJobs from "./components/admin/AdminJobs";
-import PostJob from './components/admin/PostJob'
-import Applicants from './components/admin/Applicants'
-import ProtectedRoute from './components/admin/ProtectedRoute'
+import Login from './Components/auth/Login'
+import Signup from './Components/auth/Signup'
+import Home from './Components/Home'
+import Jobs from './Components/Jobs'
+import Browse from './Components/Browse'
+import Profile from './Components/Profile'
+import JobDescription from './Components/JobDescription'
+import Companies from './Components/admin/Companies'
+import CompanyCreate from './Components/admin/CompanyCreate'
+import CompanySetup from './Components/admin/CompanySetup'
+import AdminJobs from "./Components/admin/AdminJobs";
+import PostJob from './Components/admin/PostJob'
+import Applicants from './Components/admin/Applicants'
+import ProtectedRoute from './Components/admin/ProtectedRoute'
 
 
-const appRouter = createBrowserRouter([
+const appRouter = createBrowserRouter([ 
   {
     path: '/',
     element: <Home />
@@ -26,7 +25,7 @@ const appRouter = createBrowserRouter([
     element: <Login />
   },
   {
-    path: '/signup',
+    path: '/register',
     element: <Signup />
   },
   {
@@ -48,7 +47,7 @@ const appRouter = createBrowserRouter([
 
 
   
-  //for admin
+ // for admin
   {
     path:"/admin/companies",
     element: <ProtectedRoute><Companies/></ProtectedRoute>

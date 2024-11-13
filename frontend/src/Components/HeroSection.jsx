@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import React, { useState } from 'react'
 import { Button } from './ui/button'
 import { Search } from 'lucide-react'

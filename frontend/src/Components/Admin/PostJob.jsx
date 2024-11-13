@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import React, { useState } from 'react'
 import Navbar from '../shared/Navbar'
 import { Label } from '../ui/label'
@@ -11,7 +12,7 @@ import { toast } from 'sonner'
 import { useNavigate } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
 
-const companyArray = [];
+// const companyArray = [];
 
 const PostJob = () => {
     const [input, setInput] = useState({
@@ -52,9 +53,14 @@ const PostJob = () => {
                 toast.success(res.data.message);
                 navigate("/admin/jobs");
             }
-        } catch (error) {
-            toast.error(error.response.data.message);
-        } finally{
+        }catch (error) {
+            if (error.response && error.response.data && error.response.data.message) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error("An unexpected error occurred");
+            }
+        }
+         finally{
             setLoading(false);
         }
     }
@@ -156,7 +162,10 @@ const PostJob = () => {
                                             {
                                                 companies.map((company) => {
                                                     return (
-                                                        <SelectItem value={company?.name?.toLowerCase()}>{company.name}</SelectItem>
+                                                        <SelectItem key={company._id} value={company?.name?.toLowerCase()}>
+                                                        {company.name}
+                                                      </SelectItem>
+                                                      
                                                     )
                                                 })
                                             }

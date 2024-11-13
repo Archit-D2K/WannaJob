@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from 'react'
 import Navbar from '../shared/Navbar'
 import { Button } from '../ui/button'
@@ -52,18 +53,26 @@ const CompanySetup = () => {
                 },
                 withCredentials: true
             });
-            if (res.data.success) {
+    
+            // Log the response to inspect its structure
+            console.log(res);
+    
+            // Ensure res.data is defined before accessing it
+            if (res && res.data && res.data.success) {
                 toast.success(res.data.message);
                 navigate("/admin/companies");
+            } else {
+                // Handle case where response data doesn't have the expected structure
+                toast.error("An error occurred while updating the company.");
             }
         } catch (error) {
             console.log(error);
-            toast.error(error.response.data.message);
+            toast.error(error.response?.data?.message || "An error occurred.");
         } finally {
             setLoading(false);
         }
     }
-
+    
     useEffect(() => {
         setInput({
             name: singleCompany.name || "",
@@ -78,64 +87,71 @@ const CompanySetup = () => {
         <div>
             <Navbar />
             <div className='max-w-xl mx-auto my-10'>
-                <form onSubmit={submitHandler}>
-                    <div className='flex items-center gap-5 p-8'>
-                        <Button onClick={() => navigate("/admin/companies")} variant="outline" className="flex items-center gap-2 text-gray-500 font-semibold">
-                            <ArrowLeft />
-                            <span>Back</span>
-                        </Button>
-                        <h1 className='font-bold text-xl'>Company Setup</h1>
-                    </div>
-                    <div className='grid grid-cols-2 gap-4'>
-                        <div>
-                            <Label>Company Name</Label>
-                            <Input
-                                type="text"
-                                name="name"
-                                value={input.name}
-                                onChange={changeEventHandler}
-                            />
-                        </div>
-                        <div>
-                            <Label>Description</Label>
-                            <Input
-                                type="text"
-                                name="description"
-                                value={input.description}
-                                onChange={changeEventHandler}
-                            />
-                        </div>
-                        <div>
-                            <Label>Website</Label>
-                            <Input
-                                type="text"
-                                name="website"
-                                value={input.website}
-                                onChange={changeEventHandler}
-                            />
-                        </div>
-                        <div>
-                            <Label>Location</Label>
-                            <Input
-                                type="text"
-                                name="location"
-                                value={input.location}
-                                onChange={changeEventHandler}
-                            />
-                        </div>
-                        <div>
-                            <Label>Logo</Label>
-                            <Input
-                                type="file"
-                                accept="image/*"
-                                onChange={changeFileHandler}
-                            />
-                        </div>
-                    </div>
-                    {
-                        loading ? <Button className="w-full my-4"> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait </Button> : <Button type="submit" className="w-full my-4">Update</Button>
-                    }
-                </form>
+            <form onSubmit={submitHandler}>
+    <div className="flex items-center gap-5 p-8">
+        <Button onClick={() => navigate("/admin/companies")} variant="outline" className="flex items-center gap-2 text-gray-500 font-semibold">
+            <ArrowLeft />
+            <span>Back</span>
+        </Button>
+        <h1 className="font-bold text-xl">Company Setup</h1>
+    </div>
+    <div className="grid grid-cols-2 gap-4">
+        <div>
+            <Label>Company Name</Label>
+            <Input
+                type="text"
+                name="name"
+                value={input.name}
+                onChange={changeEventHandler}
+            />
+        </div>
+        <div>
+            <Label>Description</Label>
+            <Input
+                type="text"
+                name="description"
+                value={input.description}
+                onChange={changeEventHandler}
+            />
+        </div>
+        <div>
+            <Label>Website</Label>
+            <Input
+                type="text"
+                name="website"
+                value={input.website}
+                onChange={changeEventHandler}
+            />
+        </div>
+        <div>
+            <Label>Location</Label>
+            <Input
+                type="text"
+                name="location"
+                value={input.location}
+                onChange={changeEventHandler}
+            />
+        </div>
+        <div>
+            <Label>Logo</Label>
+            <Input
+                type="file"
+                accept="image/*"
+                onChange={changeFileHandler}
+            />
+        </div>
+    </div>
+    {loading ? (
+        <Button className="w-full my-4">
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait
+        </Button>
+    ) : (
+        <Button type="submit" className="w-full my-4">
+            Update
+        </Button>
+    )}
+</form>
+
             </div>
 
         </div>
