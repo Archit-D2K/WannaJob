@@ -160,6 +160,6 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
 UpdateProfileDialog.propTypes = {
     open: PropTypes.bool.isRequired,
     setOpen: PropTypes.func.isRequired
-}
+} 
 
 export default UpdateProfileDialog
