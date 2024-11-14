@@ -1,4 +1,6 @@
+// eslint-disable-next-line no-unused-vars
 import React, { useState } from 'react'
+import PropTypes from 'prop-types';  // Import PropTypes
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog'
 import { Label } from './ui/label'
 import { Input } from './ui/input'
@@ -13,15 +15,17 @@ import { toast } from 'sonner'
 const UpdateProfileDialog = ({ open, setOpen }) => {
     const [loading, setLoading] = useState(false);
     const { user } = useSelector(store => store.auth);
+    
 
     const [input, setInput] = useState({
-        fullname: user?.fullname || "",
+        fullName: user?.fullName || "",
         email: user?.email || "",
         phoneNumber: user?.phoneNumber || "",
         bio: user?.profile?.bio || "",
-        skills: user?.profile?.skills?.map(skill => skill) || "",
+        skills: user?.profile?.skills?.join(", ") || "", // Join array to string
         file: user?.profile?.resume || ""
     });
+
     const dispatch = useDispatch();
 
     const changeEventHandler = (e) => {
@@ -35,12 +39,14 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
 
     const submitHandler = async (e) => {
         e.preventDefault();
+        
         const formData = new FormData();
-        formData.append("fullname", input.fullname);
+        formData.append("fullName", input.fullName);
         formData.append("email", input.email);
         formData.append("phoneNumber", input.phoneNumber);
         formData.append("bio", input.bio);
-        formData.append("skills", input.skills);
+        formData.append("skills", JSON.stringify(input.skills.split(",").map(skill => skill.trim())));
+
         if (input.file) {
             formData.append("file", input.file);
         }
@@ -58,15 +64,12 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
             }
         } catch (error) {
             console.log(error);
-            toast.error(error.response.data.message);
-        } finally{
+            toast.error(error.response?.data?.message || "An error occurred.");
+        } finally {
             setLoading(false);
         }
-        setOpen(false);
-        console.log(input);
+        setOpen(false); // Close the dialog after submitting
     }
-
-
 
     return (
         <div>
@@ -81,9 +84,9 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                                 <Label htmlFor="name" className="text-right">Name</Label>
                                 <Input
                                     id="name"
-                                    name="name"
+                                    name="fullName"
                                     type="text"
-                                    value={input.fullname}
+                                    value={input.fullName}
                                     onChange={changeEventHandler}
                                     className="col-span-3"
                                 />
@@ -103,7 +106,7 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                                 <Label htmlFor="number" className="text-right">Number</Label>
                                 <Input
                                     id="number"
-                                    name="number"
+                                    name="phoneNumber"
                                     value={input.phoneNumber}
                                     onChange={changeEventHandler}
                                     className="col-span-3"
@@ -152,5 +155,11 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         </div>
     )
 }
+
+// Adding PropTypes validation
+UpdateProfileDialog.propTypes = {
+    open: PropTypes.bool.isRequired,
+    setOpen: PropTypes.func.isRequired
+} 
 
 export default UpdateProfileDialog

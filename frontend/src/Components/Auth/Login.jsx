@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from 'react'
 import Navbar from '../shared/Navbar'
 import { Label } from '../ui/label'
@@ -18,7 +19,7 @@ const Login = () => {
         password: "",
         role: "",
     });
-    const { loading,user } = useSelector(store => store.auth);
+    const { user,loading} = useSelector(store => store.auth);
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -36,6 +37,7 @@ const Login = () => {
                 },
                 withCredentials: true,
             });
+            console.log(res.data);
             if (res.data.success) {
                 dispatch(setUser(res.data.user));
                 navigate("/");
@@ -44,15 +46,16 @@ const Login = () => {
         } catch (error) {
             console.log(error);
             toast.error(error.response.data.message);
-        } finally {
+        }
+         finally {
             dispatch(setLoading(false));
         }
     }
-    useEffect(()=>{
-        if(user){
-            navigate("/");
+    useEffect(() => {
+        if (user) {
+            navigate('/');
         }
-    },[])
+    }, [user, navigate]);
     return (
         <div>
             <Navbar />
@@ -109,11 +112,10 @@ const Login = () => {
                     {
                         loading ? <Button className="w-full my-4"> <Loader2 className='mr-2 h-4 w-4 animate-spin' /> Please wait </Button> : <Button type="submit" className="w-full my-4">Login</Button>
                     }
-                    <span className='text-sm'>Don't have an account? <Link to="/signup" className='text-blue-600'>Signup</Link></span>
+                    <span className='text-sm'> Do not have an account? <Link to="/Signup" className='text-blue-600'>Signup</Link></span>
                 </form>
             </div>
         </div>
     )
 }
-
 export default Login

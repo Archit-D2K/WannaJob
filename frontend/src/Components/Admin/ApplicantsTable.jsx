@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import React from 'react'
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '../ui/table'
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
@@ -44,7 +45,7 @@ const ApplicantsTable = () => {
                     {
                         applicants && applicants?.applications?.map((item) => (
                             <tr key={item._id}>
-                                <TableCell>{item?.applicant?.fullname}</TableCell>
+                                <TableCell>{item?.applicant?.fullName}</TableCell>
                                 <TableCell>{item?.applicant?.email}</TableCell>
                                 <TableCell>{item?.applicant?.phoneNumber}</TableCell>
                                 <TableCell >
@@ -52,7 +53,7 @@ const ApplicantsTable = () => {
                                         item.applicant?.profile?.resume ? <a className="text-blue-600 cursor-pointer" href={item?.applicant?.profile?.resume} target="_blank" rel="noopener noreferrer">{item?.applicant?.profile?.resumeOriginalName}</a> : <span>NA</span>
                                     }
                                 </TableCell>
-                                <TableCell>{item?.applicant.createdAt.split("T")[0]}</TableCell>
+                                <TableCell>{item?.applicant?.createdAt ? item.applicant.createdAt.split("T")[0] : "N/A"}</TableCell>
                                 <TableCell className="float-right cursor-pointer">
                                     <Popover>
                                         <PopoverTrigger>

@@ -11,7 +11,7 @@ export const applyJob = async (req, res) => {
                 success: false
             })
         };
-        // check if the user has already applied for the job
+        // already applied???
         const existingApplication = await Application.findOne({ job: jobId, applicant: userId });
 
         if (existingApplication) {
@@ -70,7 +70,7 @@ export const getAppliedJobs = async (req,res) => {
         console.log(error);
     }
 }
-// admin dekhega kitna user ne apply kiya hai
+// admin can see kitne user ne apply kra hai
 export const getApplicants = async (req,res) => {
     try {
         const jobId = req.params.id;
@@ -89,7 +89,7 @@ export const getApplicants = async (req,res) => {
         };
         return res.status(200).json({
             job, 
-            succees:true
+            success:true
         });
     } catch (error) {
         console.log(error);
@@ -106,7 +106,7 @@ export const updateStatus = async (req,res) => {
             })
         };
 
-        // find the application by applicantion id
+        // find the application by application id
         const application = await Application.findOne({_id:applicationId});
         if(!application){
             return res.status(404).json({
