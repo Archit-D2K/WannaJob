@@ -2,19 +2,16 @@
 import React from 'react'
 import { Badge } from './ui/badge'
 import { useNavigate } from 'react-router-dom'
-import PropTypes from 'prop-types'; // Import PropTypes
+import PropTypes from 'prop-types';
 
 const LatestJobCards = ({ job }) => {
     const navigate = useNavigate();
-    
-    // Fallbacks for job data if it doesn't exist
     const companyName = job?.company?.name || "Unknown Company";
     const jobTitle = job?.title || "No Title Provided";
     const jobDescription = job?.description || "No description available.";
     const jobPosition = job?.position || "Not specified";
     const jobType = job?.jobType || "Full-time";
-    const salary = job?.salary || "0"; // Assuming LPA is a number
-
+    const salary = job?.salary || "0"; 
     return (
         <div onClick={() => navigate(`/description/${job?._id}`)} className='p-5 rounded-md shadow-xl bg-white border border-gray-100 cursor-pointer'>
             <div>
@@ -33,8 +30,6 @@ const LatestJobCards = ({ job }) => {
         </div>
     )
 }
-
-// PropTypes validation
 LatestJobCards.propTypes = {
     job: PropTypes.shape({
         _id: PropTypes.string.isRequired,

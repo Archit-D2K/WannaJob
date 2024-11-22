@@ -78,8 +78,8 @@ const Signup = () => {
                         <Label>Full Name</Label>
                         <Input
                             type="text"
-                            value={input.fullname}
-                            name="fullname"
+                            value={input.fullName}
+                            name="fullName"
                             onChange={changeEventHandler}
                             placeholder="patel"
                         />
