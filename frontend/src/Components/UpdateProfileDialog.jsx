@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import React, { useState } from 'react'
-import PropTypes from 'prop-types';  // Import PropTypes
+import PropTypes from 'prop-types';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from './ui/dialog'
 import { Label } from './ui/label'
 import { Input } from './ui/input'
@@ -15,38 +15,32 @@ import { toast } from 'sonner'
 const UpdateProfileDialog = ({ open, setOpen }) => {
     const [loading, setLoading] = useState(false);
     const { user } = useSelector(store => store.auth);
-    
-
     const [input, setInput] = useState({
         fullName: user?.fullName || "",
         email: user?.email || "",
         phoneNumber: user?.phoneNumber || "",
         bio: user?.profile?.bio || "",
-        skills: user?.profile?.skills?.join(", ") || "", // Join array to string
+        skills: user?.profile?.skills?.join(", ") || "",
         file: user?.profile?.resume || ""
     });
 
     const dispatch = useDispatch();
-
     const changeEventHandler = (e) => {
         setInput({ ...input, [e.target.name]: e.target.value });
     }
-
     const fileChangeHandler = (e) => {
         const file = e.target.files?.[0];
         setInput({ ...input, file })
     }
-
     const submitHandler = async (e) => {
         e.preventDefault();
-        
         const formData = new FormData();
         formData.append("fullName", input.fullName);
         formData.append("email", input.email);
         formData.append("phoneNumber", input.phoneNumber);
         formData.append("bio", input.bio);
         formData.append("skills", JSON.stringify(input.skills.split(",").map(skill => skill.trim())));
-
+    
         if (input.file) {
             formData.append("file", input.file);
         }
@@ -59,7 +53,9 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                 withCredentials: true
             });
             if (res.data.success) {
-                dispatch(setUser(res.data.user));
+                dispatch(setUser(res.data.user)); // Update Redux store
+                const fullProfile = await axios.get(`${USER_API_END_POINT}/profile`, { withCredentials: true });
+                dispatch(setUser(fullProfile.data.user)); // Refetch full profile data
                 toast.success(res.data.message);
             }
         } catch (error) {
@@ -68,9 +64,8 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         } finally {
             setLoading(false);
         }
-        setOpen(false); // Close the dialog after submitting
-    }
-
+        setOpen(false);
+    };
     return (
         <div>
             <Dialog open={open}>
