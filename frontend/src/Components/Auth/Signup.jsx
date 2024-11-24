@@ -34,35 +34,33 @@ const Signup = () => {
     }
     const submitHandler = async (e) => {
         e.preventDefault();
-        const formData = new FormData();  
-        formData.append("fullName", input.fullName);
+        const formData = new FormData();
+        formData.append("fullname", input.fullname);
         formData.append("email", input.email);
         formData.append("phoneNumber", input.phoneNumber);
         formData.append("password", input.password);
         formData.append("role", input.role);
         if (input.file) {
-            formData.append("file", input.file);
+          formData.append("file", input.file);
         }
-        console.log(formData);
-
+      
         try {
-            dispatch(setLoading(true));
-            const res = await axios.post(`${USER_API_END_POINT}/register`, userData, {
-                headers: { 'Content-Type': "application/json" },
-                withCredentials: true,
-            });
-            console.log("Response from server:", res.data);
-            if (res.data.success) {
-                navigate("/login");
-                toast.success(res.data.message);
-            }
+          dispatch(setLoading(true));
+          const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
+            headers: { 'Content-Type': "multipart/form-data" },
+            withCredentials: true,
+          });
+          if (res.data.success) {
+            navigate("/login");
+            toast.success(res.data.message);
+          }
         } catch (error) {
-            console.error("Error details:", error.response?.data);
-            toast.error(error.response?.data?.message || "An error occurred during signup");
+          console.error("Error details:", error.response?.data);
+          toast.error(error.response?.data?.message || "An error occurred during signup");
         } finally {
-            dispatch(setLoading(false));
+          dispatch(setLoading(false));
         }
-    }
+      };
     useEffect(()=>{
         if(user){
             navigate("/");
@@ -78,8 +76,8 @@ const Signup = () => {
                         <Label>Full Name</Label>
                         <Input
                             type="text"
-                            value={input.fullName}
-                            name="fullName"
+                            value={input.fullname}
+                            name="fullname"
                             onChange={changeEventHandler}
                             placeholder="patel"
                         />

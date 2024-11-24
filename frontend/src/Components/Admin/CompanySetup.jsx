@@ -55,7 +55,6 @@ const CompanySetup = () => {
             });
     
             // Log the response to inspect its structure
-            console.log(res);
     
             // Ensure res.data is defined before accessing it
             if (res && res.data && res.data.success) {

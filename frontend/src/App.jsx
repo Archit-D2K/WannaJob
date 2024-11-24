@@ -1,18 +1,20 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import Login from './Components/auth/Login'
-import Signup from './Components/auth/Signup'
+import Login from './Components/Auth/Login'
+import Signup from './Components/Auth/Signup'
 import Home from './Components/Home'
 import Jobs from './Components/Jobs'
 import Browse from './Components/Browse'
 import Profile from './Components/Profile'
 import JobDescription from './Components/JobDescription'
-import Companies from './Components/admin/Companies'
-import CompanyCreate from './Components/admin/CompanyCreate'
-import CompanySetup from './Components/admin/CompanySetup'
-import AdminJobs from "./Components/admin/AdminJobs";
-import PostJob from './Components/admin/PostJob'
-import Applicants from './Components/admin/Applicants'
-import ProtectedRoute from './Components/admin/ProtectedRoute'
+import Companies from './Components/Admin/Companies'
+import CompanyCreate from './Components/Admin/CompanyCreate'
+import CompanySetup from './Components/Admin/CompanySetup'
+import AdminJobs from "./Components/Admin/AdminJobs";
+import PostJob from './Components/Admin/PostJob'
+import Applicants from './Components/Admin/Applicants'
+import ProtectedRoute from './Components/Admin/ProtectedRoute'
+import { Provider } from 'react-redux'
+import store from './redux/store'
 
 
 const appRouter = createBrowserRouter([ 
@@ -77,7 +79,7 @@ const appRouter = createBrowserRouter([
 function App() {
   return (
     <Provider store={store}>  {/* Wrap with Provider to pass the redux store */}
-      <RouterProvider router={appRouter} /> {/* Correct RouterProvider usage */}
+      <RouterProvider router={appRouter} /> 
     </Provider>
   );
 }

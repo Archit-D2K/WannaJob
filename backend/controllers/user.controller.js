@@ -6,63 +6,61 @@ import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloudinary.js";
 dotenv.config({});
 
-export const register =async(req,res)=>{
-    try{
-        const {fullName, email, phoneNumber, password, role}=req.body;
-        console.log(fullName, email, phoneNumber, password, role)
-        if(!fullName || !email || !phoneNumber || !password || !role){
-           
+export const register = async (req, res) => {
+    try {
+        const { fullname, email, phoneNumber, password, role } = req.body;
+
+        if (!fullname || !email || !phoneNumber || !password || !role) {
             return res.status(400).json({
-                message:"Something is missing",
-                success:false
+                message: "Something is missing",
+                success: false
             });
-        };
-        const file = req.file;
-        console.log("File received:", file); 
-        if (!file) {
+        }
+
+        const file = req.file; // This will be undefined if no file is uploaded
+
+        let profilePhotoUrl = ""; // Initialize profile photo URL
+
+        // If a file is provided, upload it to Cloudinary
+        if (file) {
+            const fileUri = getDataUri(file);
+            const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+            profilePhotoUrl = cloudResponse.secure_url; // Get the URL of the uploaded image
+        }
+
+        const user = await User.findOne({ email });
+        if (user) {
             return res.status(400).json({
-                message: "Profile picture is required",
+                message: "User already exists with this email",
                 success: false,
             });
         }
-        // cloudinary 
-        const fileUri=getDataUri(file);
-        const cloudResponse=await cloudinary.uploader.upload(fileUri.content); 
-        const user=await User.findOne({email});
-        if(user){
-            return res.status(400).json({
-                message:"user already exist with this email",
-                success:false,
-            });
-        }
-        const hashedPassword=await bcrypt.hash(password,10);
+
+        const hashedPassword = await bcrypt.hash(password, 10);
         await User.create({
-            fullName,
+            fullName: fullname,
             email,
             phoneNumber,
-            password:hashedPassword,
+            password: hashedPassword,
             role,
-            profile:{
-                profilePhoto:cloudResponse.secure_url,
+            profile: {
+                profilePhoto: profilePhotoUrl, // Use the uploaded photo URL or an empty string
             },
         });
+
         return res.status(201).json({
-            message:"Account created successfully",
-            success:true,
-            "user": {
-                "profileImage": "/path/to/image.jpg"
-              }
+            message: "Account created successfully",
+            success: true,
         });
-    }
-   
-    catch(error){
-        console.error("Error in register:", error);  // Improved error logging
+    } catch (error) {
+        console.error("Error in register:", error);
         return res.status(500).json({
             message: "Server error, please try again later.",
             success: false,
         });
     }
-}
+};
+
 export const login=async(req,res)=>{
     try{
         const {email,password,role}=req.body;
@@ -113,7 +111,6 @@ export const login=async(req,res)=>{
             role:user.role,
             profile: userProfile,
         }
-        console.log(user);
 
         return res.status(200).cookie("token",token,{maxAge:1*24*60*60*1000, httpsOnly:true, sameSite:'strict'}).json({
             message:`welcome back ${user.fullName}`,
@@ -208,7 +205,6 @@ export const updateUser = async (req, res) => {
         }
 
         // Log the updated user object for debugging
-        console.log("Updated User Object:", user);
 
         // Save the updated user profile
         await user.save();
